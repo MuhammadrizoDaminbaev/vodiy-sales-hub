@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/jahon-bozori-hero.png";
 
 const TELEGRAM_URL = "https://t.me/jahonbozori";
+const API_URL = "https://backend.prohome.uz/api/v1/leeds/create-for-hengtai";
 
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
