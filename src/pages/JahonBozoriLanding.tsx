@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import heroImage from "@/assets/jahon-bozori-hero.png";
 
 const TELEGRAM_URL = "https://t.me/jahonbozori";
 
@@ -37,9 +38,6 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
 
 function TelegramButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; className?: string }) {
   const handleClick = () => {
-    if (typeof window !== "undefined" && (window as any).gtag) {
-      (window as any).gtag("event", "telegram_click", { event_category: "CTA" });
-    }
     window.open(TELEGRAM_URL, "_blank");
   };
 
@@ -60,18 +58,15 @@ function TelegramButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; c
 
 export default function JahonBozoriLanding() {
   useEffect(() => {
-    // Scroll depth tracking
     const checkScroll = () => {
       const scrollPercent = Math.round(
         (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
       );
       if (scrollPercent >= 50 && !(window as any).__tracked50) {
         (window as any).__tracked50 = true;
-        if ((window as any).gtag) (window as any).gtag("event", "scroll_depth", { value: 50 });
       }
       if (scrollPercent >= 90 && !(window as any).__tracked90) {
         (window as any).__tracked90 = true;
-        if ((window as any).gtag) (window as any).gtag("event", "scroll_depth", { value: 90 });
       }
     };
     window.addEventListener("scroll", checkScroll, { passive: true });
@@ -85,7 +80,7 @@ export default function JahonBozoriLanding() {
         <div className="absolute inset-0">
           <img
             src={heroImage}
-            alt="Jahon Bozori masterplan"
+            alt="Jahon Bozori masterplan ko'rinishi"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
@@ -119,11 +114,7 @@ export default function JahonBozoriLanding() {
             Hozir savdoda eng katta <span className="text-gradient-gold">muammo</span> nima?
           </h2>
           <div className="space-y-4 mb-10">
-            {[
-              "Mijoz yo'q",
-              "Oqim yo'q",
-              "Joy noto'g'ri",
-            ].map((item, i) => (
+            {["Mijoz yo'q", "Oqim yo'q", "Joy noto'g'ri"].map((item, i) => (
               <div
                 key={i}
                 className="glass-card rounded-xl px-6 py-4 text-lg md:text-xl font-semibold text-foreground flex items-center gap-4"
@@ -222,15 +213,12 @@ export default function JahonBozoriLanding() {
         </Section>
       </section>
 
-      {/* STICKY TELEGRAM BUTTON (Mobile) */}
+      {/* STICKY TELEGRAM BUTTON */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:bottom-8">
         <TelegramButton size="sm" className="shadow-2xl" />
       </div>
 
-      {/* Footer spacer for sticky button */}
       <div className="h-24" />
     </div>
   );
 }
-
-import heroImage from "@/assets/jahon-bozori-hero.png";
