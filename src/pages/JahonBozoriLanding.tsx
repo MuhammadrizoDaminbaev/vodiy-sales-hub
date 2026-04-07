@@ -58,6 +58,84 @@ function TelegramButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; c
   );
 }
 
+function LeadForm() {
+  const [firstname, setFirstname] = useState("");
+  const [phone, setPhone] = useState("+998");
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firstname.trim() || phone.length < 13) {
+      toast({ title: "Iltimos, barcha maydonlarni to'ldiring", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstname: firstname.trim(), phone }),
+      });
+      if (!res.ok) throw new Error("API error");
+      setSubmitted(true);
+      toast({ title: "✅ Arizangiz qabul qilindi!" });
+    } catch {
+      toast({ title: "Xatolik yuz berdi, qaytadan urinib ko'ring", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className="glass-card rounded-2xl p-8 text-center">
+        <div className="text-5xl mb-4">✅</div>
+        <p className="text-xl font-bold text-foreground mb-2">Rahmat! Arizangiz qabul qilindi</p>
+        <p className="text-muted-foreground">Tez orada siz bilan bog'lanamiz</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 md:p-8 space-y-5">
+      <div>
+        <label className="block text-sm font-medium text-muted-foreground mb-2">Ismingiz</label>
+        <input
+          type="text"
+          value={firstname}
+          onChange={(e) => setFirstname(e.target.value)}
+          placeholder="Ismingizni kiriting"
+          className="w-full px-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-muted-foreground mb-2">Telefon raqam</label>
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val.startsWith("+998") && val.length <= 13) setPhone(val.replace(/[^\d+]/g, ""));
+          }}
+          placeholder="+998901234567"
+          className="w-full px-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-gradient-gold text-primary-foreground font-bold text-lg py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 animate-pulse-glow"
+      >
+        {loading ? "Yuborilmoqda..." : "📍 Joy band qilish"}
+      </button>
+    </form>
+  );
+}
+
 export default function JahonBozoriLanding() {
   useEffect(() => {
     const checkScroll = () => {
