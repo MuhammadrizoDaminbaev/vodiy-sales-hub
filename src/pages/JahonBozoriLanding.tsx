@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/jahon-bozori-hero.png";
 
 const TELEGRAM_URL = "https://t.me/jahonbozori";
+const API_URL = "https://backend.prohome.uz/api/v1/leeds/create-for-hengtai";
 
 function useScrollReveal() {
   const ref = useRef<HTMLDivElement>(null);
@@ -53,6 +55,84 @@ function TelegramButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; c
       </svg>
       Telegramga o'tish
     </button>
+  );
+}
+
+function LeadForm() {
+  const [firstname, setFirstname] = useState("");
+  const [phone, setPhone] = useState("+998");
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!firstname.trim() || phone.length < 13) {
+      toast({ title: "Iltimos, barcha maydonlarni to'ldiring", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ firstname: firstname.trim(), phone }),
+      });
+      if (!res.ok) throw new Error("API error");
+      setSubmitted(true);
+      toast({ title: "✅ Arizangiz qabul qilindi!" });
+    } catch {
+      toast({ title: "Xatolik yuz berdi, qaytadan urinib ko'ring", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (submitted) {
+    return (
+      <div className="glass-card rounded-2xl p-8 text-center">
+        <div className="text-5xl mb-4">✅</div>
+        <p className="text-xl font-bold text-foreground mb-2">Rahmat! Arizangiz qabul qilindi</p>
+        <p className="text-muted-foreground">Tez orada siz bilan bog'lanamiz</p>
+      </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 md:p-8 space-y-5">
+      <div>
+        <label className="block text-sm font-medium text-muted-foreground mb-2">Ismingiz</label>
+        <input
+          type="text"
+          value={firstname}
+          onChange={(e) => setFirstname(e.target.value)}
+          placeholder="Ismingizni kiriting"
+          className="w-full px-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-muted-foreground mb-2">Telefon raqam</label>
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val.startsWith("+998") && val.length <= 13) setPhone(val.replace(/[^\d+]/g, ""));
+          }}
+          placeholder="+998901234567"
+          className="w-full px-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-gradient-gold text-primary-foreground font-bold text-lg py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 animate-pulse-glow"
+      >
+        {loading ? "Yuborilmoqda..." : "📍 Joy band qilish"}
+      </button>
+    </form>
   );
 }
 
@@ -200,7 +280,19 @@ export default function JahonBozoriLanding() {
         </Section>
       </section>
 
-      {/* FINAL CTA */}
+      {/* JOY BAND QILISH FORM */}
+      <section className="py-20 md:py-28 px-6 bg-card/50">
+        <Section className="max-w-xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-black text-center text-foreground mb-4">
+            <span className="text-gradient-gold">Joy band qiling</span>
+          </h2>
+          <p className="text-center text-muted-foreground mb-10">
+            Ismingiz va raqamingizni qoldiring — biz siz bilan bog'lanamiz
+          </p>
+          <LeadForm />
+        </Section>
+      </section>
+
       <section className="py-20 md:py-28 px-6 bg-card/50">
         <Section className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-6">
