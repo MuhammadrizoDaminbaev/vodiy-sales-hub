@@ -202,7 +202,19 @@ export default function JahonBozoriLanding() {
         </Section>
       </section>
 
-      {/* FINAL CTA */}
+      {/* JOY BAND QILISH FORM */}
+      <section className="py-20 md:py-28 px-6 bg-card/50">
+        <Section className="max-w-xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-black text-center text-foreground mb-4">
+            <span className="text-gradient-gold">Joy band qiling</span>
+          </h2>
+          <p className="text-center text-muted-foreground mb-10">
+            Ismingiz va raqamingizni qoldiring — biz siz bilan bog'lanamiz
+          </p>
+          <LeadForm />
+        </Section>
+      </section>
+
       <section className="py-20 md:py-28 px-6 bg-card/50">
         <Section className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-6">
