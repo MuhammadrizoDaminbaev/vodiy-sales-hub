@@ -1,8 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/jahon-bozori-hero.png";
+import {
+  MapPin,
+  Globe,
+  Truck,
+  Users,
+  XCircle,
+  ArrowDown,
+  Send,
+  Timer,
+  Car,
+  Trophy,
+  ChevronDown,
+  Loader2,
+  CheckCircle2,
+  User,
+  Phone,
+} from "lucide-react";
 
-const TELEGRAM_URL = "https://t.me/daminboyv";
+const TELEGRAM_URL = "https://t.me/jahonbozorivodiy";
 const API_URL = "https://backend.prohome.uz/api/v1/leeds/create-for-hengtai";
 
 function useScrollReveal() {
@@ -38,22 +55,35 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-function TelegramButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; className?: string }) {
-  const handleClick = () => {
-    window.open(TELEGRAM_URL, "_blank");
-  };
+function scrollToForm() {
+  const el = document.getElementById("lead-form");
+  if (el) el.scrollIntoView({ behavior: "smooth" });
+}
 
+function TelegramButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; className?: string }) {
   return (
     <button
-      onClick={handleClick}
+      onClick={() => window.open(TELEGRAM_URL, "_blank")}
       className={`bg-gradient-gold font-bold rounded-full flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 animate-pulse-glow ${
         size === "lg" ? "px-8 py-4 text-lg" : "px-6 py-3 text-base"
       } text-primary-foreground ${className}`}
     >
-      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.693-1.653-1.124-2.678-1.8-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.062 3.345-.479.329-.912.489-1.302.481-.428-.009-1.252-.242-1.865-.442-.751-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.015 3.333-1.386 4.025-1.627 4.477-1.635.099-.002.321.023.465.141.12.098.153.229.168.332.016.103.036.332.02.513z" />
-      </svg>
+      <Send className="w-5 h-5" />
       Telegramga o'tish
+    </button>
+  );
+}
+
+function BandQilishButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; className?: string }) {
+  return (
+    <button
+      onClick={scrollToForm}
+      className={`bg-gradient-gold font-bold rounded-full flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 animate-pulse-glow ${
+        size === "lg" ? "px-8 py-4 text-lg" : "px-6 py-3 text-base"
+      } text-primary-foreground ${className}`}
+    >
+      <MapPin className="w-5 h-5" />
+      Joy band qilish
     </button>
   );
 }
@@ -80,7 +110,10 @@ function LeadForm() {
       });
       if (!res.ok) throw new Error("API error");
       setSubmitted(true);
-      toast({ title: "✅ Arizangiz qabul qilindi!" });
+      toast({ title: "Arizangiz qabul qilindi!" });
+      setTimeout(() => {
+        window.open(TELEGRAM_URL, "_blank");
+      }, 1000);
     } catch {
       toast({ title: "Xatolik yuz berdi, qaytadan urinib ko'ring", variant: "destructive" });
     } finally {
@@ -91,9 +124,9 @@ function LeadForm() {
   if (submitted) {
     return (
       <div className="glass-card rounded-2xl p-8 text-center">
-        <div className="text-5xl mb-4">✅</div>
+        <CheckCircle2 className="w-14 h-14 text-primary mx-auto mb-4" />
         <p className="text-xl font-bold text-foreground mb-2">Rahmat! Arizangiz qabul qilindi</p>
-        <p className="text-muted-foreground">Tez orada siz bilan bog'lanamiz</p>
+        <p className="text-muted-foreground">Telegram kanalga yo'naltirilmoqdasiz...</p>
       </div>
     );
   }
@@ -102,35 +135,51 @@ function LeadForm() {
     <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 md:p-8 space-y-5">
       <div>
         <label className="block text-sm font-medium text-muted-foreground mb-2">Ismingiz</label>
-        <input
-          type="text"
-          value={firstname}
-          onChange={(e) => setFirstname(e.target.value)}
-          placeholder="Ismingizni kiriting"
-          className="w-full px-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
-          required
-        />
+        <div className="relative">
+          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <input
+            type="text"
+            value={firstname}
+            onChange={(e) => setFirstname(e.target.value)}
+            placeholder="Ismingizni kiriting"
+            className="w-full pl-12 pr-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
+            required
+          />
+        </div>
       </div>
       <div>
         <label className="block text-sm font-medium text-muted-foreground mb-2">Telefon raqam</label>
-        <input
-          type="tel"
-          value={phone}
-          onChange={(e) => {
-            const val = e.target.value;
-            if (val.startsWith("+998") && val.length <= 13) setPhone(val.replace(/[^\d+]/g, ""));
-          }}
-          placeholder="+998901234567"
-          className="w-full px-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
-          required
-        />
+        <div className="relative">
+          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <input
+            type="tel"
+            value={phone}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (val.startsWith("+998") && val.length <= 13) setPhone(val.replace(/[^\d+]/g, ""));
+            }}
+            placeholder="+998901234567"
+            className="w-full pl-12 pr-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
+            required
+          />
+        </div>
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-gold text-primary-foreground font-bold text-lg py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 animate-pulse-glow"
+        className="w-full bg-gradient-gold text-primary-foreground font-bold text-lg py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 animate-pulse-glow flex items-center justify-center gap-2"
       >
-        {loading ? "Yuborilmoqda..." : "📍 Joy band qilish"}
+        {loading ? (
+          <>
+            <Loader2 className="w-5 h-5 animate-spin" />
+            Yuborilmoqda...
+          </>
+        ) : (
+          <>
+            <MapPin className="w-5 h-5" />
+            Joy band qilish
+          </>
+        )}
       </button>
     </form>
   );
@@ -176,14 +225,13 @@ export default function JahonBozoriLanding() {
           <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in-up animate-delay-200">
             Bu oddiy bozor emas — bu <span className="text-foreground font-semibold">savdo oqimi markazi</span>
           </p>
-          <div className="mt-10 animate-fade-in-up animate-delay-400">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up animate-delay-400">
+            <BandQilishButton />
             <TelegramButton />
           </div>
         </div>
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <svg className="w-6 h-6 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
+          <ChevronDown className="w-6 h-6 text-muted-foreground" />
         </div>
       </section>
 
@@ -199,14 +247,15 @@ export default function JahonBozoriLanding() {
                 key={i}
                 className="glass-card rounded-xl px-6 py-4 text-lg md:text-xl font-semibold text-foreground flex items-center gap-4"
               >
-                <span className="text-destructive text-2xl">✕</span>
+                <XCircle className="w-6 h-6 text-destructive shrink-0" />
                 {item}
               </div>
             ))}
           </div>
-          <p className="text-xl md:text-2xl font-bold text-gradient-gold">
-            Bu loyiha aynan shu muammoni hal qiladi ↓
-          </p>
+          <div className="flex items-center justify-center gap-2 text-xl md:text-2xl font-bold text-gradient-gold">
+            Bu loyiha aynan shu muammoni hal qiladi
+            <ArrowDown className="w-6 h-6 text-primary" />
+          </div>
         </Section>
       </section>
 
@@ -218,20 +267,20 @@ export default function JahonBozoriLanding() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { icon: "📐", title: "33 gektar hudud", desc: "Markaziy Osiyodagi eng yirik loyihalardan biri" },
-              { icon: "🌍", title: "Xalqaro savdo markazi", desc: "Import-eksport uchun strategik joy" },
-              { icon: "🚛", title: "Kuchli logistika", desc: "Yetkazib berish tizimi ichiga qurilgan" },
-              { icon: "👥", title: "Doimiy mijoz oqimi", desc: "Kunlik minglab xaridorlar oqimi" },
+              { icon: MapPin, title: "33 gektar hudud", desc: "Markaziy Osiyodagi eng yirik loyihalardan biri" },
+              { icon: Globe, title: "Xalqaro savdo markazi", desc: "Import-eksport uchun strategik joy" },
+              { icon: Truck, title: "Kuchli logistika", desc: "Yetkazib berish tizimi ichiga qurilgan" },
+              { icon: Users, title: "Doimiy mijoz oqimi", desc: "Kunlik minglab xaridorlar oqimi" },
             ].map((item, i) => (
               <div key={i} className="glass-card rounded-2xl p-6 md:p-8 hover:border-primary/30 transition-colors">
-                <div className="text-4xl mb-4">{item.icon}</div>
+                <item.icon className="w-10 h-10 text-primary mb-4" />
                 <h3 className="text-xl md:text-2xl font-bold text-foreground mb-2">{item.title}</h3>
                 <p className="text-muted-foreground">{item.desc}</p>
               </div>
             ))}
           </div>
           <div className="text-center mt-10">
-            <TelegramButton size="sm" />
+            <BandQilishButton size="sm" />
           </div>
         </Section>
       </section>
@@ -252,15 +301,18 @@ export default function JahonBozoriLanding() {
       {/* DAMAS OFFER */}
       <section className="py-20 md:py-28 px-6 bg-card/50">
         <Section className="max-w-3xl mx-auto text-center">
-          <div className="text-6xl md:text-8xl mb-6">🚐</div>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <Car className="w-14 h-14 md:w-20 md:h-20 text-primary" />
+            <Trophy className="w-10 h-10 md:w-14 md:h-14 text-primary" />
+          </div>
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
-            Har bir do'kon uchun <span className="text-gradient-gold">5 ta Damas</span>
+            <span className="text-gradient-gold">5 ta Damas</span>dan bittasini yutib oling
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground">
-            Mahsulotingiz har doim harakatda bo'ladi
+            Joy band qiling va Damas yutib olish imkoniyatiga ega bo'ling
           </p>
           <div className="mt-10">
-            <TelegramButton size="sm" />
+            <BandQilishButton size="sm" />
           </div>
         </Section>
       </section>
@@ -274,14 +326,15 @@ export default function JahonBozoriLanding() {
           <p className="text-lg md:text-xl text-muted-foreground">
             Eng yaxshi joylar birinchi bo'lib band qilinadi
           </p>
-          <div className="mt-8 glass-card rounded-2xl p-6 inline-block">
-            <p className="text-2xl md:text-3xl font-black text-gradient-gold">⏳ Joylar cheklangan</p>
+          <div className="mt-8 glass-card rounded-2xl p-6 inline-flex items-center gap-3">
+            <Timer className="w-8 h-8 text-primary" />
+            <p className="text-2xl md:text-3xl font-black text-gradient-gold">Joylar cheklangan</p>
           </div>
         </Section>
       </section>
 
       {/* JOY BAND QILISH FORM */}
-      <section className="py-20 md:py-28 px-6 bg-card/50">
+      <section id="lead-form" className="py-20 md:py-28 px-6 bg-card/50">
         <Section className="max-w-xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-black text-center text-foreground mb-4">
             <span className="text-gradient-gold">Joy band qiling</span>
@@ -305,9 +358,9 @@ export default function JahonBozoriLanding() {
         </Section>
       </section>
 
-      {/* STICKY TELEGRAM BUTTON */}
+      {/* STICKY BUTTON */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:bottom-8">
-        <TelegramButton size="sm" className="shadow-2xl" />
+        <BandQilishButton size="sm" className="shadow-2xl" />
       </div>
 
       <div className="h-24" />
