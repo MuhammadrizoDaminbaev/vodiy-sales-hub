@@ -1,77 +1,19 @@
-import { useEffect, useRef, useState } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 import heroImage from "@/assets/jahon-bozori-hero.png";
 import {
-  MapPin,
-  Globe,
-  Truck,
-  Users,
-  XCircle,
-  ArrowDown,
-  Send,
-  Timer,
-  Car,
-  Trophy,
-  ChevronDown,
-  Loader2,
-  CheckCircle2,
-  User,
-  Phone,
+  MapPin, Globe, Truck, Users, XCircle, ArrowDown,
+  Timer, Car, Trophy, ChevronDown,
 } from "lucide-react";
-
-const TELEGRAM_URL = "https://t.me/jahonbozorivodiy";
-const API_URL = "https://backend.prohome.uz/api/v1/leeds/create-for-hengtai";
-
-function useScrollReveal() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return { ref, isVisible };
-}
-
-function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const { ref, isVisible } = useScrollReveal();
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"} ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
+import { Section } from "@/components/jahon-bozori/ScrollReveal";
+import LeadForm from "@/components/jahon-bozori/LeadForm";
+import ExitIntentModal from "@/components/jahon-bozori/ExitIntentModal";
+import GallerySection from "@/components/jahon-bozori/GallerySection";
+import ReelsSection from "@/components/jahon-bozori/ReelsSection";
+import ContactSection from "@/components/jahon-bozori/ContactSection";
 
 function scrollToForm() {
   const el = document.getElementById("lead-form");
   if (el) el.scrollIntoView({ behavior: "smooth" });
-}
-
-function TelegramButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; className?: string }) {
-  return (
-    <button
-      onClick={() => window.open(TELEGRAM_URL, "_blank")}
-      className={`bg-gradient-gold font-bold rounded-full flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 animate-pulse-glow ${
-        size === "lg" ? "px-8 py-4 text-lg" : "px-6 py-3 text-base"
-      } text-primary-foreground ${className}`}
-    >
-      <Send className="w-5 h-5" />
-      Telegramga o'tish
-    </button>
-  );
 }
 
 function BandQilishButton({ size = "lg", className = "" }: { size?: "lg" | "sm"; className?: string }) {
@@ -85,103 +27,6 @@ function BandQilishButton({ size = "lg", className = "" }: { size?: "lg" | "sm";
       <MapPin className="w-5 h-5" />
       Joy band qilish
     </button>
-  );
-}
-
-function LeadForm() {
-  const [firstname, setFirstname] = useState("");
-  const [phone, setPhone] = useState("+998");
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!firstname.trim() || phone.length < 13) {
-      toast({ title: "Iltimos, barcha maydonlarni to'ldiring", variant: "destructive" });
-      return;
-    }
-    setLoading(true);
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ firstname: firstname.trim(), phone }),
-      });
-      if (!res.ok) throw new Error("API error");
-      setSubmitted(true);
-      toast({ title: "Arizangiz qabul qilindi!" });
-      setTimeout(() => {
-        window.open(TELEGRAM_URL, "_blank");
-      }, 1000);
-    } catch {
-      toast({ title: "Xatolik yuz berdi, qaytadan urinib ko'ring", variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (submitted) {
-    return (
-      <div className="glass-card rounded-2xl p-8 text-center">
-        <CheckCircle2 className="w-14 h-14 text-primary mx-auto mb-4" />
-        <p className="text-xl font-bold text-foreground mb-2">Rahmat! Arizangiz qabul qilindi</p>
-        <p className="text-muted-foreground">Telegram kanalga yo'naltirilmoqdasiz...</p>
-      </div>
-    );
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="glass-card rounded-2xl p-6 md:p-8 space-y-5">
-      <div>
-        <label className="block text-sm font-medium text-muted-foreground mb-2">Ismingiz</label>
-        <div className="relative">
-          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <input
-            type="text"
-            value={firstname}
-            onChange={(e) => setFirstname(e.target.value)}
-            placeholder="Ismingizni kiriting"
-            className="w-full pl-12 pr-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
-            required
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-muted-foreground mb-2">Telefon raqam</label>
-        <div className="relative">
-          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-          <input
-            type="tel"
-            value={phone}
-            onChange={(e) => {
-              const val = e.target.value;
-              if (val.startsWith("+998") && val.length <= 13) setPhone(val.replace(/[^\d+]/g, ""));
-            }}
-            placeholder="+998901234567"
-            className="w-full pl-12 pr-4 py-3 rounded-xl bg-secondary text-foreground border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors text-lg"
-            required
-          />
-        </div>
-      </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-gradient-gold text-primary-foreground font-bold text-lg py-4 rounded-xl transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 animate-pulse-glow flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="w-5 h-5 animate-spin" />
-            Yuborilmoqda...
-          </>
-        ) : (
-          <>
-            <MapPin className="w-5 h-5" />
-            Joy band qilish
-          </>
-        )}
-      </button>
-    </form>
   );
 }
 
@@ -204,14 +49,12 @@ export default function JahonBozoriLanding() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <ExitIntentModal />
+
       {/* HERO */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt="Jahon Bozori masterplan ko'rinishi"
-            className="w-full h-full object-cover"
-          />
+          <img src={heroImage} alt="Jahon Bozori masterplan ko'rinishi" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
         </div>
         <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
@@ -225,9 +68,8 @@ export default function JahonBozoriLanding() {
           <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto animate-fade-in-up animate-delay-200">
             Bu oddiy bozor emas — bu <span className="text-foreground font-semibold">savdo oqimi markazi</span>
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up animate-delay-400">
+          <div className="mt-10 animate-fade-in-up animate-delay-400">
             <BandQilishButton />
-            <TelegramButton />
           </div>
         </div>
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
@@ -235,7 +77,20 @@ export default function JahonBozoriLanding() {
         </div>
       </section>
 
-      {/* MUAMMO + HOOK */}
+      {/* LEAD FORM — early position */}
+      <section id="lead-form" className="py-20 md:py-28 px-6 bg-card/50">
+        <Section className="max-w-xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-black text-center text-foreground mb-4">
+            <span className="text-gradient-gold">Joy band qiling</span>
+          </h2>
+          <p className="text-center text-muted-foreground mb-10">
+            Ismingiz va raqamingizni qoldiring — biz siz bilan bog'lanamiz
+          </p>
+          <LeadForm />
+        </Section>
+      </section>
+
+      {/* MUAMMO */}
       <section className="py-20 md:py-28 px-6">
         <Section className="max-w-3xl mx-auto text-center">
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-10">
@@ -243,10 +98,7 @@ export default function JahonBozoriLanding() {
           </h2>
           <div className="space-y-4 mb-10">
             {["Mijoz yo'q", "Oqim yo'q", "Joy noto'g'ri"].map((item, i) => (
-              <div
-                key={i}
-                className="glass-card rounded-xl px-6 py-4 text-lg md:text-xl font-semibold text-foreground flex items-center gap-4"
-              >
+              <div key={i} className="glass-card rounded-xl px-6 py-4 text-lg md:text-xl font-semibold text-foreground flex items-center gap-4">
                 <XCircle className="w-6 h-6 text-destructive shrink-0" />
                 {item}
               </div>
@@ -298,6 +150,9 @@ export default function JahonBozoriLanding() {
         </Section>
       </section>
 
+      {/* GALLERY */}
+      <GallerySection />
+
       {/* DAMAS OFFER */}
       <section className="py-20 md:py-28 px-6 bg-card/50">
         <Section className="max-w-3xl mx-auto text-center">
@@ -333,32 +188,26 @@ export default function JahonBozoriLanding() {
         </Section>
       </section>
 
-      {/* JOY BAND QILISH FORM */}
-      <section id="lead-form" className="py-20 md:py-28 px-6 bg-card/50">
+      {/* REELS */}
+      <ReelsSection />
+
+      {/* CONTACT */}
+      <ContactSection />
+
+      {/* CTA — bottom form repeat */}
+      <section className="py-20 md:py-28 px-6 bg-card/50">
         <Section className="max-w-xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-black text-center text-foreground mb-4">
-            <span className="text-gradient-gold">Joy band qiling</span>
+            <span className="text-gradient-gold">Hoziroq joy band qiling</span>
           </h2>
           <p className="text-center text-muted-foreground mb-10">
-            Ismingiz va raqamingizni qoldiring — biz siz bilan bog'lanamiz
+            Chegirmali narxlardan foydalaning
           </p>
           <LeadForm />
         </Section>
       </section>
 
-      <section className="py-20 md:py-28 px-6 bg-card/50">
-        <Section className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-black text-foreground mb-6">
-            Barcha ma'lumotlar <span className="text-gradient-gold">Telegram kanalimizda</span>
-          </h2>
-          <p className="text-lg text-muted-foreground mb-10">
-            Narxlar, joylar, shartlar — hammasi bir joyda
-          </p>
-          <TelegramButton />
-        </Section>
-      </section>
-
-      {/* STICKY BUTTON */}
+      {/* STICKY CTA */}
       <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 md:bottom-8">
         <BandQilishButton size="sm" className="shadow-2xl" />
       </div>
